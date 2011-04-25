@@ -2,31 +2,76 @@ CON
   _clkmode = xtal1+pll16x
   _xinfreq = 5_000_000
 
-  PIN_CS   = 0
-  PIN_DAT  = 2
+  PIN_DAT  = 0
   PIN_WCLK = 1
+  PIN_RCLK = 2
+  PIN_CS1  = 3
+  PIN_CS2  = 4
+  PIN_CS3  = 5
+  PIN_CS4  = 6
+
+  ms = 3
 
 OBJ
-  m : "matrixLib"
+  ml : "matrixLib"
 
 PUB Main
-  m.Init(PIN_CS,PIN_DAT,PIN_WCLK)
+  ml.Init(PIN_DAT,PIN_WCLK)
+
+  banner
+  waitcnt(cnt+clkfreq)
+  scroll_r(@chaoskueste,@ende)
   repeat
-    banner
     waitcnt(cnt+clkfreq)
-    scroll
+    scroll_l(@start,@ende)
     waitcnt(cnt+clkfreq)
+    scroll_r(@start,@ende)
+
+PUB init | m
+  ml.HT1632_Init(PIN_CS1,1)
+  repeat m from 1 to ms-1
+    ml.HT1632_Init(PIN_CS1+m,0)
 
 PUB banner
-  m.HT1632_Print(@chaoskueste)
+  scrollStep(@chaoskueste,0)
 
-PUB scroll | i,l
-  l := (@ende-@frickl)/2
-  repeat i from 0 to l-24
-    m.HT1632_Print(@frickl[i])
-    waitcnt(cnt+clkfreq/10)
+PUB scroll_r(von,bis) | i,l
+  l := (bis-von)/2 - 24*ms
+  repeat i from 0 to l
+    scrollStep(von,i)
+    waitcnt(cnt+clkfreq/60)
+
+PUB scroll_l(von,bis) | i,l
+  l := (bis-von)/2 - 24*ms
+  repeat i from l to 0
+    scrollStep(von,i)
+    waitcnt(cnt+clkfreq/60)
+
+PUB scrollStep(von,i) | m
+  repeat m from 0 to ms-1
+    ml.HT1632_Print(PIN_CS1+m,von+2*i+2*24*m)
 
 DAT
+  start
+    word %0000_0000_0000_0000
+    word %0000_0000_0000_0000
+    word %1010_1010_1010_1010
+    word %0101_0101_0101_0101
+    word %0000_0000_0000_0000
+    word %0000_0000_0000_0000
+    word %1010_1010_1010_1010
+    word %0101_0101_0101_0101
+    word %0000_0000_0000_0000
+    word %0000_0000_0000_0000
+    word %1010_1010_1010_1010
+    word %0101_0101_0101_0101
+    word %0000_0000_0000_0000
+    word %0000_0000_0000_0000
+    word %1010_1010_1010_1010
+    word %0101_0101_0101_0101
+    word %0000_0000_0000_0000
+    word %0000_0000_0000_0000
+
   chaoskueste
     word %1111_1110_0000_0000
     word %0001_0000_0011_1110
@@ -58,10 +103,27 @@ DAT
     word %1001_0010_0000_1000
     word %0000_0000_0000_1000
 
-  frickl
+  scroll1
+    word %0000_0000_0000_0000
+    word %0000_0000_0000_0000
     word %1010_1010_1010_1010
     word %0101_0101_0101_0101
     word %0000_0000_0000_0000
+    word %0000_0000_0000_0000
+    word %1010_1010_1010_1010
+    word %0101_0101_0101_0101
+    word %0000_0000_0000_0000
+    word %0000_0000_0000_0000
+    word %1010_1010_1010_1010
+    word %0101_0101_0101_0101
+    word %0000_0000_0000_0000
+    word %0000_0000_0000_0000
+    word %1010_1010_1010_1010
+    word %0101_0101_0101_0101
+    word %0000_0000_0000_0000
+    word %0000_0000_0000_0000
+
+  frickl
     word %1111_1111_1111_1111
     word %1111_1111_1111_1111
     word %0000_0001_1000_0011
@@ -109,7 +171,25 @@ DAT
     word %1100_0000_0000_0000
     word %1100_0000_0000_0000
     word %1100_0000_0000_0000
+
+  scroll2
+    word %0000_0000_0000_0000
     word %0000_0000_0000_0000
     word %1010_1010_1010_1010
     word %0101_0101_0101_0101
+    word %0000_0000_0000_0000
+    word %0000_0000_0000_0000
+    word %1010_1010_1010_1010
+    word %0101_0101_0101_0101
+    word %0000_0000_0000_0000
+    word %0000_0000_0000_0000
+    word %1010_1010_1010_1010
+    word %0101_0101_0101_0101
+    word %0000_0000_0000_0000
+    word %0000_0000_0000_0000
+    word %1010_1010_1010_1010
+    word %0101_0101_0101_0101
+    word %0000_0000_0000_0000
+    word %0000_0000_0000_0000
+
   ende
